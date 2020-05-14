@@ -1,0 +1,18 @@
+function Lc = lev_centrality(CIJ)
+
+
+
+
+
+
+N=length(G);                        %number of nodes
+    E=zeros(N,1);                       %local efficiency
+
+    for u=1:N
+        V=find(G(u,:));                 %neighbors
+        k=length(V);                    %degree
+        if k>=2;                        %degree must be at least two
+            e=distance_inv(G(V,V));
+            E(u)=sum(e(:))./(k^2-k);	%local efficiency
+        end
+    end

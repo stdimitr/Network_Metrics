@@ -1,0 +1,71 @@
+
+%Please refer to this mini toolbox as:
+%Dimitriadis et al., 2010 Tracking brain dynamics via time-dependent network analysis.)
+
+%create a random w functional connectivity graph (FCG)
+no=64;
+
+%directed weighted graph
+wd=rand(no,no);
+
+%invers
+dd=1./wd;
+for i=1:no
+    dd(i,i)=0;
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% SHORTEST PATH LENGTH & CLUSTERING COEFFICIENT %%%%%%%%%%%%%%%%%%%%%%%
+%Compute weighted shortest path length, distance matrix and detect
+%significant edges via a new threshold scheme based on DIjkstra's algorithm 
+%(see Dimitriadis et al., 2010 Tracking brain dynamics via time-dependent network analysis.)
+
+% clustering coefficient with spatial orientations 
+%a) for weighted undirected graphs
+[binary distance lnode meanl]=spl_wu(du);
+
+%b) for weighted directed graphs
+[binary distance lnode meanl]=spl_wd(dd);
+
+
+% clustering coefficient with spatial orientations 
+%%It needs an adjacency matrix where 1s refers to its neighbors
+%an exemplar was showed with 64 EEG sensors
+%a) for weighted undirected graphs
+[clust mclust]=clustering_coefficient_wu(wu,'mask64.mat');
+
+%b) for weighted directed graphs
+[clust mclust]=clustering_coefficient_wd(wd,'mask64.mat');
+
+
+%%%%%%%%%%%%%%%%%%%%%%%% GLOBAL & LOCAL EFFICIENCY %%%%%%%%%%%%%%%%%%
+%For global & local efficiency see Latora & Macchiori,"Efficient Behavior
+%of Small-World Networks", Physical Review Letters,2001
+%compute global and nodal efficiency
+[gl_node gl]=global_efficiency_wu(w1);
+
+% local efficiency based on weighted undirected/directed graphs
+% estimation of local efficiency based on a subgraph that includes all the connections of each node
+% with the rest of the network without spatial restrictions
+% a)local efficiency based on weighted undirected graphs
+[le mle]=local_efficiecy_wu1(w);
+
+%b)local efficiency based on weighted directed graphs
+[le meanl]=local_efficiency_wd(w);
+
+%c) estimation of local efficiency based on the subgraph consists of its
+%immediate (1st) spatial neighbors according to 10-20 IS
+%It needs an adjacency matrix where 1s refers to its neighbors
+%an exemplar was showed with 64 EEG sensors
+
+%One can use different mask files that keeps the 1st,2nd,3rd ... neighbors of each node 
+%in order to unfold the hierarchical features of a connectivity graph as proposed in
+%Costa & Sporns,"Hierarchical features of large-scale cortical connectivity",Eur. Phys. J. B 48, 567–573 (2005)
+[le meanl]=local_efficiency_wu(w,'mask64.mat');
+
+
+
+
+
+%the mini-toolbox contains also:
+%1)degrees_und, degrees_dir, distance_wei,clust_coef_wu, clust_coef_wd functions from BCT
+%2)dijkstra's algorithm implemented in mex-files from BGL toolbox -Stanford
